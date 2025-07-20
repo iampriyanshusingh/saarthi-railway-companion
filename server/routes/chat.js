@@ -1,12 +1,12 @@
 const express = require('express');
-const OpenAI = require('openai');
+const Groq = require('groq-sdk');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// Initialize OpenAI client
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Initialize Groq client
+const groq = process.env.GROQ_API_KEY ? new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 }) : null;
 
 // Railway station context for AI responses
@@ -33,7 +33,7 @@ Station Layout:
 Always be helpful, concise, and provide specific directions when asked. If you don't know something specific, offer to help the user contact station staff or direct them to the information desk.
 `;
 
-// Mock responses for when OpenAI is not available
+// Mock responses for when Groq is not available
 const getMockResponse = (message) => {
   const lowerMessage = message.toLowerCase();
   
@@ -77,7 +77,7 @@ const getMockResponse = (message) => {
 };
 
 // Chat endpoint
-router.post('/message', auth, async (req, res) => {
+router.post('/message',  async (req, res) => {
   try {
     const { message, conversationHistory = [] } = req.body;
 
@@ -90,9 +90,9 @@ router.post('/message', auth, async (req, res) => {
 
     let response;
 
-    if (openai) {
+    if (groq) {
       try {
-        // Prepare conversation history for OpenAI
+        // Prepare conversation history for Groq
         const messages = [
           {
             role: 'system',
@@ -108,8 +108,8 @@ router.post('/message', auth, async (req, res) => {
           }
         ];
 
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-4',
+        const completion = await groq.chat.completions.create({
+          model: 'llama3-70b-8192', // or another Llama model available on Groq
           messages: messages,
           max_tokens: 500,
           temperature: 0.7,
@@ -117,13 +117,13 @@ router.post('/message', auth, async (req, res) => {
 
         response = completion.choices[0].message.content;
 
-      } catch (openaiError) {
-        console.error('OpenAI API error:', openaiError);
-        // Fallback to mock response if OpenAI fails
+      } catch (groqError) {
+        console.error('Groq API error:', groqError);
+        // Fallback to mock response if Groq fails
         response = getMockResponse(message);
       }
     } else {
-      // Use mock response when OpenAI is not configured
+      // Use mock response when Groq is not configured
       response = getMockResponse(message);
     }
 
