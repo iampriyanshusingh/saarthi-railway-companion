@@ -68,6 +68,7 @@ const AuthPage = () => {
         <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8">
           <div className="mb-6">
             <div className="flex rounded-lg bg-gray-100 p-1">
+              
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
