@@ -200,6 +200,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { chatService } from '../services/chatService.js';
 import axios from 'axios';
 
 const ChatBot = () => {
@@ -265,7 +266,44 @@ const ChatBot = () => {
     }
   };
 
+  //   const handleSend = async () => {
+//     if (!inputText.trim() || isLoading) return;
+
+//     const userMessage = {
+//       id: Date.now(),
+//       text: inputText,
+//       sender: 'user',
+//       timestamp: new Date()
+//     };
+
+//     setMessages(prev => [...prev, userMessage]);
+//     setInputText('');
+//     setIsLoading(true);
+
+//     try {
+//       const response = await chatService.sendMessage(inputText);
+//       const botMessage = {
+//         id: Date.now() + 1,
+//         text: response.message,
+//         sender: 'bot',
+//         timestamp: new Date()
+//       };
+//       setMessages(prev => [...prev, botMessage]);
+//     } catch (error) {
+//       const errorMessage = {
+//         id: Date.now() + 1,
+//         text: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+//         sender: 'bot',
+//         timestamp: new Date()
+//       };
+//       setMessages(prev => [...prev, errorMessage]);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
   const sendMessage = async () => {
+    console.log('sendmessage');
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = {
@@ -279,10 +317,12 @@ const ChatBot = () => {
     setInputMessage('');
     setIsLoading(true);
 
+    
+
     try {
-      const response = await axios.post('http://localhost:3001/api/chat/message', {
-        message: inputMessage,
-      });
+      const response = await chatService.sendMessage(inputMessage);
+
+      console.log('response.data.response', response.data.response);
 
       const botMessage = {
         id: (Date.now() + 1).toString(),

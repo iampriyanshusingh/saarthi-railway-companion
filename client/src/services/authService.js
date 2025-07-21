@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api/auth';
+const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 const authService = {
   login: async (email, password) => {
@@ -9,6 +9,7 @@ const authService = {
   },
 
   register: async (userData) => {
+    console.log(API_URL);
     const response = await axios.post(`${API_URL}/register`, userData);
     return response.data;
   },

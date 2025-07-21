@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const API_URL = '/api/chat';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/chat`;
 
 const chatService = {
   sendMessage: async (message) => {
+    console.log('message', message);
     const token = localStorage.getItem('token');
     const response = await axios.post(`${API_URL}/message`, 
       { message },
@@ -11,7 +12,8 @@ const chatService = {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       }
     );
-    return response.data;
+    console.log('data', response.data);
+    return response;
   }
 };
 
