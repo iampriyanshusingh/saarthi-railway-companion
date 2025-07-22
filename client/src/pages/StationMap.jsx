@@ -1,758 +1,643 @@
-// import React, { useState, useRef, useEffect } from 'react';
-// import { Canvas } from '@react-three/fiber';
-// import { OrbitControls, Text, Box, Plane } from '@react-three/drei';
-// import { Navigation, MapPin, Route, Info, Accessibility } from 'lucide-react';
-// import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-// const StationMap = () => {
-//   const [selectedLocation, setSelectedLocation] = useState(null);
-//   const [navigationMode, setNavigationMode] = useState(false);
-//   const [startPoint, setStartPoint] = useState(null);
-//   const [endPoint, setEndPoint] = useState(null);
-//   const [pathVisible, setPathVisible] = useState(false);
+// Fix for default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+});
 
-//   // Station locations with 3D coordinates
-//   const locations = [
-//     { id: 'platform1', name: 'Platform 1', position: [-8, 0, -2], type: 'platform', info: 'Trains to Mumbai, Delhi' },
-//     { id: 'platform2', name: 'Platform 2', position: [-8, 0, 2], type: 'platform', info: 'Trains to Bangalore, Chennai' },
-//     { id: 'platform3', name: 'Platform 3', position: [-8, 0, 6], type: 'platform', info: 'Trains to Kolkata, Hyderabad' },
-//     { id: 'foodcourt', name: 'Food Court', position: [0, 0, -6], type: 'amenity', info: 'Restaurants, Cafes, Snacks' },
-//     { id: 'restroom1', name: 'Restroom 1', position: [2, 0, -2], type: 'amenity', info: 'Men & Women facilities' },
-//     { id: 'restroom2', name: 'Restroom 2', position: [2, 0, 6], type: 'amenity', info: 'Men & Women facilities' },
-//     { id: 'ticket', name: 'Ticket Counter', position: [6, 0, 0], type: 'service', info: 'Booking, Reservations, Enquiry' },
-//     { id: 'entrance', name: 'Main Entrance', position: [8, 0, 0], type: 'entrance', info: 'Station Entry/Exit point' },
-//     { id: 'waiting', name: 'Waiting Room', position: [0, 0, 2], type: 'amenity', info: 'AC Waiting Room' },
-//     { id: 'pharmacy', name: 'Medical Store', position: [4, 0, -4], type: 'service', info: 'Medicines, First Aid' }
-//   ];
-
-//   const getLocationColor = (type) => {
-//     switch (type) {
-//       case 'platform': return '#3b82f6';
-//       case 'amenity': return '#10b981';
-//       case 'service': return '#f59e0b';
-//       case 'entrance': return '#ef4444';
-//       default: return '#6b7280';
-//     }
-//   };
-
-//   const LocationMarker = ({ location, onClick }) => {
-//     const [hovered, setHovered] = useState(false);
-
-//     return (
-//       <group position={location.position}>
-//         <Box
-//           args={[1, 2, 1]}
-//           onPointerOver={() => setHovered(true)}
-//           onPointerOut={() => setHovered(false)}
-//           onClick={() => onClick(location)}
-//           scale={hovered ? 1.2 : 1}
-//         >
-//           <meshStandardMaterial color={getLocationColor(location.type)} transparent opacity={0.8} />
-//         </Box>
-//         <Text
-//           position={[0, 2.5, 0]}
-//           fontSize={0.5}
-//           color="#1f2937"
-//           anchorX="center"
-//           anchorY="middle"
-//           font="/fonts/inter-bold.woff"
-//         >
-//           {location.name}
-//         </Text>
-//       </group>
-//     );
-//   };
-
-//   const PathLine = ({ start, end }) => {
-//     const points = [
-//       start.position[0], start.position[1] + 0.1, start.position[2],
-//       end.position[0], end.position[1] + 0.1, end.position[2]
-//     ];
-
-//     return (
-//       <line>
-//         <bufferGeometry>
-//           <bufferAttribute
-//             attachObject={['attributes', 'position']}
-//             array={new Float32Array(points)}
-//             count={2}
-//             itemSize={3}
-//           />
-//         </bufferGeometry>
-//         <lineBasicMaterial color="#ef4444" linewidth={3} />
-//       </line>
-//     );
-//   };
-
-//   const handleLocationClick = (location) => {
-//     setSelectedLocation(location);
-    
-//     if (navigationMode) {
-//       if (!startPoint) {
-//         setStartPoint(location);
-//       } else if (!endPoint && location.id !== startPoint.id) {
-//         setEndPoint(location);
-//         setPathVisible(true);
-//       } else {
-//         // Reset navigation
-//         setStartPoint(location);
-//         setEndPoint(null);
-//         setPathVisible(false);
-//       }
-//     }
-//   };
-
-//   const startNavigation = () => {
-//     setNavigationMode(true);
-//     setStartPoint(null);
-//     setEndPoint(null);
-//     setPathVisible(false);
-//     setSelectedLocation(null);
-//   };
-
-//   const stopNavigation = () => {
-//     setNavigationMode(false);
-//     setStartPoint(null);
-//     setEndPoint(null);
-//     setPathVisible(false);
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       <div className="max-w-7xl mx-auto px-4 py-8">
-//         {/* Header */}
-//         <motion.div
-//           initial={{ opacity: 0, y: -20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           className="mb-8"
-//         >
-//           <h1 className="text-3xl font-bold text-gray-900 mb-2">3D Station Map</h1>
-//           <p className="text-gray-600">Navigate through the station with our interactive 3D map</p>
-//         </motion.div>
-
-//         {/* Controls */}
-//         <motion.div
-//           initial={{ opacity: 0, y: 20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           className="mb-6 flex flex-wrap gap-4"
-//         >
-//           {!navigationMode ? (
-//             <button
-//               onClick={startNavigation}
-//               className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-//             >
-//               <Navigation className="w-4 h-4 mr-2" />
-//               Start Navigation
-//             </button>
-//           ) : (
-//             <div className="flex items-center gap-4">
-//               <div className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
-//                 {!startPoint ? 'Select starting point' : 
-//                  !endPoint ? 'Select destination' : 
-//                  'Route found!'}
-//               </div>
-//               <button
-//                 onClick={stopNavigation}
-//                 className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-//               >
-//                 Stop Navigation
-//               </button>
-//             </div>
-//           )}
-          
-//           <div className="flex items-center gap-2">
-//             <div className="flex items-center gap-1">
-//               <div className="w-3 h-3 bg-blue-500 rounded"></div>
-//               <span className="text-sm text-gray-600">Platforms</span>
-//             </div>
-//             <div className="flex items-center gap-1">
-//               <div className="w-3 h-3 bg-green-500 rounded"></div>
-//               <span className="text-sm text-gray-600">Amenities</span>
-//             </div>
-//             <div className="flex items-center gap-1">
-//               <div className="w-3 h-3 bg-amber-500 rounded"></div>
-//               <span className="text-sm text-gray-600">Services</span>
-//             </div>
-//             <div className="flex items-center gap-1">
-//               <div className="w-3 h-3 bg-red-500 rounded"></div>
-//               <span className="text-sm text-gray-600">Entrance</span>
-//             </div>
-//           </div>
-//         </motion.div>
-
-//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-//           {/* 3D Map */}
-//           <motion.div
-//             initial={{ opacity: 0, scale: 0.95 }}
-//             animate={{ opacity: 1, scale: 1 }}
-//             className="lg:col-span-2 h-96 lg:h-[600px] bg-white rounded-2xl shadow-lg overflow-hidden"
-//           >
-//             <Canvas camera={{ position: [15, 15, 15], fov: 60 }}>
-//               <ambientLight intensity={0.6} />
-//               <directionalLight position={[10, 10, 5]} intensity={1} />
-              
-//               {/* Station Floor */}
-//               <Plane args={[20, 15]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
-//                 <meshStandardMaterial color="#e5e7eb" />
-//               </Plane>
-              
-//               {/* Location Markers */}
-//               {locations.map((location) => (
-//                 <LocationMarker
-//                   key={location.id}
-//                   location={location}
-//                   onClick={handleLocationClick}
-//                 />
-//               ))}
-              
-//               {/* Navigation Path */}
-//               {pathVisible && startPoint && endPoint && (
-//                 <PathLine start={startPoint} end={endPoint} />
-//               )}
-              
-//               <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
-//             </Canvas>
-//           </motion.div>
-
-//           {/* Information Panel */}
-//           <motion.div
-//             initial={{ opacity: 0, x: 20 }}
-//             animate={{ opacity: 1, x: 0 }}
-//             className="space-y-6"
-//           >
-//             {/* Selected Location Info */}
-//             <AnimatePresence>
-//               {selectedLocation && (
-//                 <motion.div
-//                   initial={{ opacity: 0, y: 20 }}
-//                   animate={{ opacity: 1, y: 0 }}
-//                   exit={{ opacity: 0, y: -20 }}
-//                   className="bg-white p-6 rounded-2xl shadow-lg"
-//                 >
-//                   <div className="flex items-start gap-3 mb-4">
-//                     <div 
-//                       className="w-8 h-8 rounded-lg flex items-center justify-center"
-//                       style={{ backgroundColor: getLocationColor(selectedLocation.type) + '20' }}
-//                     >
-//                       <MapPin 
-//                         className="w-4 h-4" 
-//                         style={{ color: getLocationColor(selectedLocation.type) }}
-//                       />
-//                     </div>
-//                     <div>
-//                       <h3 className="font-semibold text-gray-900">{selectedLocation.name}</h3>
-//                       <p className="text-sm text-gray-600 capitalize">{selectedLocation.type}</p>
-//                     </div>
-//                   </div>
-//                   <p className="text-gray-700 mb-4">{selectedLocation.info}</p>
-//                   <div className="flex gap-2">
-//                     <button className="flex-1 px-3 py-2 bg-primary-50 text-primary-600 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors">
-//                       Get Directions
-//                     </button>
-//                     <button className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
-//                       <Info className="w-4 h-4" />
-//                     </button>
-//                   </div>
-//                 </motion.div>
-//               )}
-//             </AnimatePresence>
-
-//             {/* Navigation Status */}
-//             {navigationMode && (
-//               <motion.div
-//                 initial={{ opacity: 0, y: 20 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 className="bg-blue-50 border border-blue-200 p-4 rounded-xl"
-//               >
-//                 <h3 className="font-semibold text-blue-900 mb-2">Navigation Mode</h3>
-//                 {startPoint && (
-//                   <div className="text-sm text-blue-700 mb-1">
-//                     From: <span className="font-medium">{startPoint.name}</span>
-//                   </div>
-//                 )}
-//                 {endPoint && (
-//                   <div className="text-sm text-blue-700 mb-2">
-//                     To: <span className="font-medium">{endPoint.name}</span>
-//                   </div>
-//                 )}
-//                 {pathVisible && (
-//                   <div className="text-sm text-green-700 font-medium">
-//                     ✓ Route calculated successfully
-//                   </div>
-//                 )}
-//               </motion.div>
-//             )}
-
-//             {/* Quick Actions */}
-//             <div className="bg-white p-6 rounded-2xl shadow-lg">
-//               <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
-//               <div className="space-y-3">
-//                 <button className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
-//                   <Accessibility className="w-5 h-5 text-green-600" />
-//                   <div>
-//                     <div className="font-medium text-gray-900">Request Assistance</div>
-//                     <div className="text-sm text-gray-600">Wheelchair, Porter service</div>
-//                   </div>
-//                 </button>
-//                 <button className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors">
-//                   <Route className="w-5 h-5 text-blue-600" />
-//                   <div>
-//                     <div className="font-medium text-gray-900">Find Shortest Path</div>
-//                     <div className="text-sm text-gray-600">To any destination</div>
-//                   </div>
-//                 </button>
-//               </div>
-//             </div>
-
-//             {/* Location List */}
-//             <div className="bg-white p-6 rounded-2xl shadow-lg">
-//               <h3 className="font-semibold text-gray-900 mb-4">All Locations</h3>
-//               <div className="space-y-2 max-h-64 overflow-y-auto">
-//                 {locations.map((location) => (
-//                   <button
-//                     key={location.id}
-//                     onClick={() => handleLocationClick(location)}
-//                     className={`w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors ${
-//                       selectedLocation?.id === location.id ? 'bg-primary-50 border border-primary-200' : ''
-//                     }`}
-//                   >
-//                     <div 
-//                       className="w-3 h-3 rounded-full"
-//                       style={{ backgroundColor: getLocationColor(location.type) }}
-//                     ></div>
-//                     <span className="text-sm font-medium text-gray-900">{location.name}</span>
-//                   </button>
-//                 ))}
-//               </div>
-//             </div>
-//           </motion.div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default StationMap;
-
-
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Navigation, MapPin, Coffee, ListRestart as Restroom, Car, ShoppingBag, Utensils, CreditCard, Users, Accessibility, Volume2, Languages } from 'lucide-react';
-
-const StationMap = () => {
-  const [selectedAmenity, setSelectedAmenity] = useState(null);
-  const [navigationPath, setNavigationPath] = useState(null);
-  const [userLocation, setUserLocation] = useState({ x: 50, y: 300 });
+const StationNavigator = () => {
+  // Navigation state
+  const [currentView, setCurrentView] = useState('map');
+  const [startPoint, setStartPoint] = useState('');
+  const [endPoint, setEndPoint] = useState('');
+  const [routeSteps, setRouteSteps] = useState([]);
+  const [accessibilityMode, setAccessibilityMode] = useState(false);
+  const [estimatedTime, setEstimatedTime] = useState(0);
+  const [activeRoute, setActiveRoute] = useState(null);
+  
+  // Navigation simulation state
+  const [currentStep, setCurrentStep] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
-  const mapRef = useRef(null);
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [remainingDistance, setRemainingDistance] = useState(0);
+  const [navigationProgress, setNavigationProgress] = useState(0);
+  const navigationInterval = useRef(null);
 
-  const amenities = [
-    { id: '1', name: 'Restroom (Men)', category: 'restroom', location: { x: 150, y: 200 }, isAccessible: true, isOpen: true },
-    { id: '2', name: 'Restroom (Women)', category: 'restroom', location: { x: 150, y: 250 }, isAccessible: true, isOpen: true },
-    { id: '3', name: 'Food Court', category: 'food', location: { x: 300, y: 180 }, isAccessible: true, isOpen: true },
-    { id: '4', name: 'ATM', category: 'banking', location: { x: 100, y: 150 }, isAccessible: true, isOpen: true },
-    { id: '5', name: 'Waiting Hall', category: 'waiting', location: { x: 250, y: 120 }, isAccessible: true, isOpen: true },
-    { id: '6', name: 'Platform 1', category: 'platform', location: { x: 400, y: 100 }, isAccessible: true, isOpen: true },
-    { id: '7', name: 'Platform 2', category: 'platform', location: { x: 400, y: 200 }, isAccessible: true, isOpen: true },
-    { id: '8', name: 'Platform 3', category: 'platform', location: { x: 400, y: 300 }, isAccessible: true, isOpen: true },
-    { id: '9', name: 'Ticket Counter', category: 'services', location: { x: 120, y: 100 }, isAccessible: true, isOpen: true },
-    { id: '10', name: 'Information Desk', category: 'services', location: { x: 200, y: 80 }, isAccessible: true, isOpen: true },
-    { id: '11', name: 'Coffee Shop', category: 'food', location: { x: 350, y: 150 }, isAccessible: true, isOpen: true },
-    { id: '12', name: 'Gift Shop', category: 'shopping', location: { x: 280, y: 200 }, isAccessible: true, isOpen: true },
+  // Station layout data
+  const stationBounds = [
+    [51.504, -0.095], // Southwest corner
+    [51.506, -0.075]  // Northeast corner
   ];
 
-  const platforms = [
-    { id: 'p1', name: 'Platform 1', location: { x: 400, y: 100 }, trains: ['Rajdhani Express'] },
-    { id: 'p2', name: 'Platform 2', location: { x: 400, y: 200 }, trains: ['Duronto Express'] },
-    { id: 'p3', name: 'Platform 3', location: { x: 400, y: 300 }, trains: ['Shatabdi Express'] },
+  const userPosition = [51.505, -0.091];
+  
+  // Detailed station features
+  const stationFeatures = [
+    { id: 'main_entrance', name: "Main Entrance", position: [51.5052, -0.091], type: "entrance" },
+    { id: 'north_entrance', name: "North Entrance", position: [51.506, -0.085], type: "entrance" },
+    { id: 'platform_1', name: "Platform 1", position: [51.5048, -0.088], type: "platform" },
+    { id: 'platform_2', name: "Platform 2", position: [51.5045, -0.087], type: "platform" },
+    { id: 'platform_3', name: "Platform 3", position: [51.5043, -0.086], type: "platform" },
+    { id: 'ticket_office', name: "Ticket Office", position: [51.505, -0.089], type: "service" },
+    { id: 'information', name: "Information Desk", position: [51.5051, -0.090], type: "service" },
+    { id: 'restroom', name: "Restrooms", position: [51.5049, -0.0895], type: "amenity" },
+    { id: 'cafe', name: "Station Cafe", position: [51.505, -0.088], type: "food" },
+    { id: 'shop', name: "Convenience Store", position: [51.5052, -0.0885], type: "shopping" },
+    { id: 'elevator_1', name: "Elevator (Main)", position: [51.505, -0.0895], type: "accessibility" },
+    { id: 'escalator_1', name: "Escalator (North)", position: [51.5055, -0.087], type: "accessibility" }
   ];
 
-  const getIconForCategory = (category) => {
-    switch (category) {
-      case 'restroom': return Restroom;
-      case 'food': return Utensils;
-      case 'banking': return CreditCard;
-      case 'waiting': return Users;
-      case 'platform': return Car;
-      case 'services': return MapPin;
-      case 'shopping': return ShoppingBag;
-      default: return MapPin;
-    }
-  };
+  const locations = [
+    { id: "main_entrance", name: "Main Entrance" },
+    { id: "north_entrance", name: "North Entrance" },
+    { id: "platform_1", name: "Platform 1" },
+    { id: "platform_2", name: "Platform 2" },
+    { id: "platform_3", name: "Platform 3" },
+    { id: "restroom", name: "Restrooms" },
+    { id: "ticket_office", name: "Ticket Office" },
+    { id: "information", name: "Information Desk" }
+  ];
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'restroom': return 'bg-blue-500';
-      case 'food': return 'bg-orange-500';
-      case 'banking': return 'bg-green-500';
-      case 'waiting': return 'bg-purple-500';
-      case 'platform': return 'bg-red-500';
-      case 'services': return 'bg-indigo-500';
-      case 'shopping': return 'bg-pink-500';
-      default: return 'bg-gray-500';
-    }
-  };
+  // Train schedule data
+  const [trains, setTrains] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const navigateToAmenity = (amenity) => {
-    const path = {
-      from: 'Main Entrance',
-      to: amenity.name,
-      steps: [
-        'Start from the main entrance',
-        'Walk straight through the main concourse',
-        `Turn ${amenity.location.x > 200 ? 'right' : 'left'} towards ${amenity.category} area`,
-        `Arrive at ${amenity.name}`,
-      ],
-      estimatedTime: Math.ceil(Math.random() * 5) + 2, // 2-7 minutes
-    };
+  useEffect(() => {
+    // Mock train data
+    const mockTrains = [
+      { id: 1, number: "EC123", destination: "London", departure: "10:15", platform: "1", status: "On Time" },
+      { id: 2, number: "IC456", destination: "Manchester", departure: "10:30", platform: "2", status: "Delayed 5 min" },
+      { id: 3, number: "XC789", destination: "Birmingham", departure: "10:45", platform: "3", status: "On Time" },
+    ];
+    
+    setTimeout(() => {
+      setTrains(mockTrains);
+      setLoading(false);
+    }, 1000);
 
-    setNavigationPath(path);
-    setSelectedAmenity(amenity);
-    setIsNavigating(true);
-
-    // Simulate navigation animation
-    animateToLocation(amenity.location);
-  };
-
-  const animateToLocation = (destination) => {
-    const startTime = Date.now();
-    const duration = 3000; // 3 seconds
-    const startLocation = { ...userLocation };
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function for smooth animation
-      const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      const easedProgress = easeInOutQuad(progress);
-
-      const newLocation = {
-        x: startLocation.x + (destination.x - startLocation.x) * easedProgress,
-        y: startLocation.y + (destination.y - startLocation.y) * easedProgress,
-      };
-
-      setUserLocation(newLocation);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setIsNavigating(false);
+    return () => {
+      if (navigationInterval.current) {
+        clearInterval(navigationInterval.current);
       }
     };
+  }, []);
 
-    animate();
+  // Generate points between start and end for smooth movement
+  const generateIntermediatePoints = (start, end, count = 10) => {
+    const points = [];
+    for (let i = 1; i <= count; i++) {
+      const ratio = i / (count + 1);
+      points.push([
+        start[0] + (end[0] - start[0]) * ratio,
+        start[1] + (end[1] - start[1]) * ratio
+      ]);
+    }
+    return points;
   };
 
-  const handleAmenityClick = (amenity) => {
-    setSelectedAmenity(amenity);
+  // Calculate distance between two points (simplified)
+  const calculateDistance = (point1, point2) => {
+    return Math.sqrt(
+      Math.pow(point1[0] - point2[0], 2) + 
+      Math.pow(point1[1] - point2[1], 2)
+    ) * 111320; // Convert to meters (approximate)
   };
 
-  const speakInstructions = () => {
-    if (navigationPath && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(
-        `Navigation to ${navigationPath.to}. ${navigationPath.steps.join('. ')}.`
-      );
-      speechSynthesis.speak(utterance);
+  // Calculate total route distance
+  const calculateTotalDistance = (route) => {
+    let distance = 0;
+    for (let i = 1; i < route.length; i++) {
+      distance += calculateDistance(route[i-1], route[i]);
+    }
+    return distance;
+  };
+
+  // Voice announcement
+  const announceInstruction = (text) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Interactive Station Map</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Click on any amenity or platform to get navigation directions. Your current location is shown in blue.
-          </p>
-        </motion.div>
+  // Calculate route with intermediate points
+  const calculateRoute = () => {
+    if (!startPoint || !endPoint) return;
+    
+    const startFeature = stationFeatures.find(f => f.id === startPoint);
+    const endFeature = stationFeatures.find(f => f.id === endPoint);
+    
+    if (!startFeature || !endFeature) return;
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Map Area */}
-          <div className="lg:col-span-3">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-xl shadow-lg p-6"
+    // Generate route with intermediate points
+    const intermediatePoints = generateIntermediatePoints(
+      startFeature.position, 
+      endFeature.position
+    );
+
+    const steps = [
+      `Start at ${startFeature.name}`,
+      accessibilityMode 
+        ? "Take the accessible route via elevators" 
+        : "Take the direct route via stairs/escalators",
+      `Follow signs to ${endFeature.name}`,
+      `You have arrived at ${endFeature.name}`
+    ];
+    
+    const totalDistance = calculateTotalDistance([startFeature.position, ...intermediatePoints, endFeature.position]);
+    const walkingSpeed = accessibilityMode ? 0.8 : 1.4; // m/s
+    setEstimatedTime(Math.round(totalDistance / (walkingSpeed * 60)));
+    
+    setRouteSteps(steps);
+    setActiveRoute([startFeature.position, ...intermediatePoints, endFeature.position]);
+    setCurrentPosition(startFeature.position);
+    setCurrentStep(0);
+    setNavigationProgress(0);
+    setCurrentView('map');
+  };
+
+  // Start navigation simulation
+  const startNavigation = () => {
+    if (!activeRoute || activeRoute.length < 2) return;
+    
+    setIsNavigating(true);
+    setCurrentStep(0);
+    setCurrentPosition(activeRoute[0]);
+    setRemainingDistance(calculateTotalDistance(activeRoute));
+    
+    let step = 0;
+    const totalSteps = activeRoute.length - 1;
+    const stepDuration = (estimatedTime * 60 * 1000) / totalSteps; // ms per step
+    
+    navigationInterval.current = setInterval(() => {
+      step++;
+      if (step >= totalSteps) {
+        completeNavigation();
+        return;
+      }
+      
+      setCurrentStep(step);
+      setCurrentPosition(activeRoute[step]);
+      setRemainingDistance(calculateTotalDistance(activeRoute.slice(step)));
+      setNavigationProgress((step / totalSteps) * 100);
+      
+      // Announce instructions at certain points
+      if (step === 1) {
+        announceInstruction("Begin walking " + (accessibilityMode ? "toward the elevators" : "toward the stairs"));
+      } else if (step === Math.floor(totalSteps * 0.5)) {
+        announceInstruction(`Continue straight for about ${Math.round(remainingDistance/2)} meters`);
+      } else if (step === totalSteps - 3) {
+        announceInstruction(`Your destination is just ahead`);
+      }
+      
+      // Simulate vibration for important turns
+      if (step === 3 && navigator.vibrate) {
+        navigator.vibrate(200);
+      }
+    }, stepDuration);
+  };
+
+  // Stop navigation
+  const stopNavigation = () => {
+    clearInterval(navigationInterval.current);
+    setIsNavigating(false);
+    announceInstruction("Navigation stopped");
+  };
+
+  // Complete navigation
+  const completeNavigation = () => {
+    clearInterval(navigationInterval.current);
+    setIsNavigating(false);
+    setNavigationProgress(100);
+    announceInstruction(routeSteps[routeSteps.length - 1]);
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  };
+
+  // Get icon for station features
+  const getIconForFeature = (feature) => {
+    const icons = {
+      entrance: "🚪",
+      platform: "🚉",
+      service: "ℹ️",
+      amenity: "🚻",
+      food: "☕",
+      shopping: "🛍️",
+      accessibility: "♿"
+    };
+    return L.divIcon({
+      html: `<div style="font-size: 24px">${icons[feature.type] || "📍"}</div>`,
+      className: 'custom-icon'
+    });
+  };
+
+  const handleNavigateToPlatform = (platform) => {
+    setStartPoint('main_entrance');
+    setEndPoint(`platform_${platform}`);
+    calculateRoute();
+  };
+
+  const MapView = () => (
+    <div style={{ marginBottom: '20px', position: 'relative' }}>
+      <MapContainer 
+        center={currentPosition || [51.505, -0.09]} 
+        zoom={19}
+        minZoom={18}
+        maxBounds={stationBounds}
+        style={{ height: "60vh", width: "100%" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
+        />
+        
+        {stationFeatures.map(feature => (
+          <Marker 
+            key={feature.id} 
+            position={feature.position}
+            icon={getIconForFeature(feature)}
+          >
+            <Popup>
+              <strong>{feature.name}</strong><br/>
+              <small>{feature.type}</small>
+            </Popup>
+          </Marker>
+        ))}
+        
+        {activeRoute && (
+          <Polyline 
+            positions={activeRoute} 
+            color="blue" 
+            weight={5} 
+            opacity={0.7} 
+            dashArray="10, 10"
+          />
+        )}
+        
+        {currentPosition && (
+          <Marker 
+            position={currentPosition}
+            icon={L.divIcon({
+              html: '<div style="font-size: 24px">🧍</div>',
+              className: 'user-icon'
+            })}
+          >
+            <Popup>Your current position</Popup>
+          </Marker>
+        )}
+      </MapContainer>
+
+      {/* Navigation controls */}
+      <div style={{
+        position: 'absolute',
+        bottom: '30px',
+        right: '10px',
+        zIndex: 1000,
+        backgroundColor: 'white',
+        padding: '15px',
+        borderRadius: '8px',
+        boxShadow: '0 0 15px rgba(0,0,0,0.2)',
+        width: 'calc(100% - 40px)',
+        maxWidth: '400px'
+      }}>
+        {isNavigating ? (
+          <div>
+            <h3 style={{ marginTop: 0 }}>
+              Navigating to: {locations.find(l => l.id === endPoint)?.name}
+            </h3>
+            <p style={{ fontSize: '1.1em', margin: '10px 0' }}>
+              <strong>Next:</strong> {routeSteps[Math.min(Math.floor(currentStep / 5) + 1, routeSteps.length - 1)]}
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Remaining:</strong> ~{Math.round(remainingDistance)} meters
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Time:</strong> ~{Math.round((remainingDistance / (accessibilityMode ? 0.8 : 1.4) / 60))} minutes
+            </p>
+            <div style={{
+              width: '100%',
+              backgroundColor: '#eee',
+              borderRadius: '5px',
+              margin: '15px 0',
+              height: '10px'
+            }}>
+              <div style={{
+                width: `${navigationProgress}%`,
+                height: '100%',
+                backgroundColor: '#28a745',
+                borderRadius: '5px',
+                transition: 'width 1s linear'
+              }}></div>
+            </div>
+            <button 
+              onClick={stopNavigation}
+              style={{
+                padding: '8px 15px',
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                fontSize: '1em',
+                width: '100%'
+              }}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Station Layout</h2>
-                <div className="flex space-x-4">
-                  <button
-                    onClick={speakInstructions}
-                    disabled={!navigationPath}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                  >
-                    <Volume2 className="h-4 w-4" />
-                    <span>Voice Guide</span>
-                  </button>
-                  <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <Languages className="h-4 w-4" />
-                    <span>हिंदी</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 3D Map Container */}
-              <div
-                ref={mapRef}
-                className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border-2 border-gray-300"
-                style={{ height: '500px', width: '100%' }}
-              >
-                {/* Station Structure */}
-                <div className="absolute inset-4 bg-white rounded-lg shadow-inner border border-gray-300">
-                  {/* Main Concourse */}
-                  <div className="absolute top-10 left-10 right-10 h-20 bg-blue-50 rounded-lg border border-blue-200 flex items-center justify-center">
-                    <span className="text-sm font-medium text-blue-800">Main Concourse</span>
-                  </div>
-
-                  {/* Platform Area */}
-                  <div className="absolute top-4 right-4 bottom-4 w-24 bg-red-50 rounded-lg border border-red-200 flex flex-col items-center justify-center">
-                    <span className="text-xs font-medium text-red-800 mb-2">Platforms</span>
-                    {platforms.map((platform, index) => (
-                      <div
-                        key={platform.id}
-                        className="w-16 h-16 bg-red-200 rounded-lg border border-red-300 mb-2 flex flex-col items-center justify-center cursor-pointer hover:bg-red-300 transition-colors"
-                        style={{
-                          position: 'absolute',
-                          left: '4px',
-                          top: `${20 + index * 80}px`,
-                        }}
-                        onClick={() => handleAmenityClick({
-                          id: platform.id,
-                          name: platform.name,
-                          category: 'platform',
-                          location: platform.location,
-                          isAccessible: true,
-                          isOpen: true,
-                        })}
-                      >
-                        <Car className="h-4 w-4 text-red-700" />
-                        <span className="text-xs text-red-700">{index + 1}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Amenities */}
-                  {amenities.map((amenity) => {
-                    const Icon = getIconForCategory(amenity.category);
-                    const colorClass = getCategoryColor(amenity.category);
-                    
-                    return (
-                      <motion.div
-                        key={amenity.id}
-                        className={`absolute w-8 h-8 ${colorClass} rounded-lg shadow-lg cursor-pointer hover:scale-110 transition-transform flex items-center justify-center`}
-                        style={{
-                          left: `${amenity.location.x}px`,
-                          top: `${amenity.location.y}px`,
-                        }}
-                        onClick={() => handleAmenityClick(amenity)}
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <Icon className="h-4 w-4 text-white" />
-                        {amenity.isAccessible && (
-                          <Accessibility className="absolute -top-1 -right-1 h-3 w-3 text-green-600 bg-white rounded-full" />
-                        )}
-                      </motion.div>
-                    );
-                  })}
-
-                  {/* User Location */}
-                  <motion.div
-                    className="absolute w-6 h-6 bg-blue-600 rounded-full shadow-lg border-2 border-white"
-                    style={{
-                      left: `${userLocation.x}px`,
-                      top: `${userLocation.y}px`,
-                    }}
-                    animate={{
-                      scale: isNavigating ? [1, 1.2, 1] : 1,
-                    }}
-                    transition={{
-                      duration: 0.5,
-                      repeat: isNavigating ? Infinity : 0,
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-blue-600 rounded-full animate-ping opacity-75"></div>
-                  </motion.div>
-
-                  {/* Navigation Path */}
-                  {navigationPath && selectedAmenity && (
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                      <defs>
-                        <marker
-                          id="arrowhead"
-                          markerWidth="10"
-                          markerHeight="7"
-                          refX="9"
-                          refY="3.5"
-                          orient="auto"
-                        >
-                          <polygon
-                            points="0 0, 10 3.5, 0 7"
-                            fill="#3b82f6"
-                          />
-                        </marker>
-                      </defs>
-                      <motion.path
-                        d={`M ${userLocation.x} ${userLocation.y} Q ${(userLocation.x + selectedAmenity.location.x) / 2} ${Math.min(userLocation.y, selectedAmenity.location.y) - 30} ${selectedAmenity.location.x} ${selectedAmenity.location.y}`}
-                        stroke="#3b82f6"
-                        strokeWidth="3"
-                        fill="none"
-                        markerEnd="url(#arrowhead)"
-                        strokeDasharray="10,5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1.5 }}
-                      />
-                    </svg>
-                  )}
-                </div>
-
-                {/* Entrance */}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                  Main Entrance
-                </div>
-              </div>
-
-              {/* Legend */}
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { category: 'restroom', name: 'Restrooms', icon: Restroom },
-                  { category: 'food', name: 'Food & Dining', icon: Utensils },
-                  { category: 'banking', name: 'Banking', icon: CreditCard },
-                  { category: 'services', name: 'Services', icon: MapPin },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const colorClass = getCategoryColor(item.category);
-                  
-                  return (
-                    <div key={item.category} className="flex items-center space-x-2">
-                      <div className={`w-4 h-4 ${colorClass} rounded flex items-center justify-center`}>
-                        <Icon className="h-2 w-2 text-white" />
-                      </div>
-                      <span className="text-sm text-gray-600">{item.name}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
+              Stop Navigation
+            </button>
           </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Navigation Panel */}
-            {navigationPath && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-white rounded-xl shadow-lg p-6"
-              >
-                <div className="flex items-center space-x-2 mb-4">
-                  <Navigation className="h-5 w-5 text-blue-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Navigation</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-600">From: {navigationPath.from}</p>
-                    <p className="text-sm text-gray-600">To: {navigationPath.to}</p>
-                    <p className="text-sm text-blue-600 font-medium">
-                      Est. time: {navigationPath.estimatedTime} minutes
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-900">Directions:</h4>
-                    {navigationPath.steps.map((step, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <span className="flex-shrink-0 w-5 h-5 bg-blue-100 text-blue-600 rounded-full text-xs flex items-center justify-center font-medium">
-                          {index + 1}
-                        </span>
-                        <span className="text-sm text-gray-600">{step}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Selected Amenity Info */}
-            {selectedAmenity && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-white rounded-xl shadow-lg p-6"
-              >
-                <div className="flex items-center space-x-2 mb-4">
-                  <MapPin className="h-5 w-5 text-green-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Location Info</h3>
-                </div>
-                
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-900">{selectedAmenity.name}</h4>
-                  <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 rounded-full text-xs ${selectedAmenity.isOpen ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {selectedAmenity.isOpen ? 'Open' : 'Closed'}
-                    </span>
-                    {selectedAmenity.isAccessible && (
-                      <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                        Wheelchair Accessible
-                      </span>
-                    )}
-                  </div>
-                  
-                  <button
-                    onClick={() => navigateToAmenity(selectedAmenity)}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Navigate Here
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Quick Actions */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white rounded-xl shadow-lg p-6"
+        ) : activeRoute ? (
+          <div>
+            <h3 style={{ marginTop: 0 }}>Ready to Navigate</h3>
+            <p style={{ margin: '10px 0' }}>
+              Route to: {locations.find(l => l.id === endPoint)?.name}
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Distance:</strong> ~{Math.round(calculateTotalDistance(activeRoute))} meters
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Est. Time:</strong> ~{estimatedTime} minutes
+            </p>
+            <button 
+              onClick={startNavigation}
+              style={{
+                padding: '8px 15px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                fontSize: '1em',
+                width: '100%'
+              }}
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Access</h3>
-              <div className="space-y-2">
-                {[
-                  { name: 'Nearest Restroom', category: 'restroom' },
-                  { name: 'Food Court', category: 'food' },
-                  { name: 'Platform 1', category: 'platform' },
-                  { name: 'Information Desk', category: 'services' },
-                ].map((item) => {
-                  const amenity = amenities.find(a => a.category === item.category);
-                  return (
-                    <button
-                      key={item.name}
-                      onClick={() => amenity && navigateToAmenity(amenity)}
-                      className="w-full text-left p-2 rounded-lg hover:bg-gray-50 transition-colors text-sm text-gray-700"
-                    >
-                      {item.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
+              Start Navigation
+            </button>
           </div>
-        </div>
+        ) : (
+          <p>Select a route to begin navigation</p>
+        )}
       </div>
+
+      {routeSteps.length > 0 && (
+        <div style={{
+          backgroundColor: '#f8f9fa',
+          padding: '15px',
+          borderRadius: '8px',
+          marginTop: '15px',
+          boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ marginTop: 0 }}>Route Instructions</h3>
+          <ol style={{ paddingLeft: '20px' }}>
+            {routeSteps.map((step, index) => (
+              <li key={index} style={{ margin: '10px 0', fontSize: '1.05em' }}>
+                {step}
+              </li>
+            ))}
+          </ol>
+          <button 
+            onClick={() => {
+              const utterance = new SpeechSynthesisUtterance(routeSteps.join('. Next, '));
+              window.speechSynthesis.speak(utterance);
+            }}
+            style={{ 
+              padding: '8px 15px',
+              backgroundColor: '#0056b3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              fontSize: '1em',
+              marginTop: '10px'
+            }}
+          >
+            🔊 Read All Instructions Aloud
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const TrainScheduleView = () => (
+    <div>
+      <h2 style={{ color: '#333' }}>Departures</h2>
+      {loading ? (
+        <p>Loading train data...</p>
+      ) : (
+        <div style={{ overflowX: 'auto', boxShadow: '0 0 10px rgba(0,0,0,0.1)', borderRadius: '8px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#0056b3', color: 'white' }}>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Time</th>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Train</th>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Destination</th>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Platform</th>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
+                <th style={{ padding: '12px', textAlign: 'left' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trains.map(train => (
+                <tr key={train.id} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '12px' }}>{train.departure}</td>
+                  <td style={{ padding: '12px' }}>{train.number}</td>
+                  <td style={{ padding: '12px' }}>{train.destination}</td>
+                  <td style={{ padding: '12px' }}>{train.platform}</td>
+                  <td style={{ padding: '12px', 
+                    color: train.status.includes('Delayed') ? '#dc3545' : '#28a745'
+                  }}>
+                    {train.status}
+                  </td>
+                  <td style={{ padding: '12px' }}>
+                    <button 
+                      onClick={() => handleNavigateToPlatform(train.platform)}
+                      style={{ 
+                        padding: '6px 12px',
+                        backgroundColor: '#0056b3',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Guide Me
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+
+  const NavigationPanelView = () => (
+    <div style={{ 
+      padding: '20px', 
+      backgroundColor: '#f8f9fa', 
+      borderRadius: '8px',
+      boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+    }}>
+      <h2 style={{ color: '#333', marginTop: 0 }}>Station Navigation</h2>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>From:</label>
+        <select 
+          value={startPoint} 
+          onChange={(e) => setStartPoint(e.target.value)}
+          style={{ 
+            width: '100%',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ddd',
+            fontSize: '1em'
+          }}
+        >
+          <option value="">Select starting point</option>
+          {locations.map(loc => (
+            <option key={`start-${loc.id}`} value={loc.id}>{loc.name}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>To:</label>
+        <select 
+          value={endPoint} 
+          onChange={(e) => setEndPoint(e.target.value)}
+          style={{ 
+            width: '100%',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ddd',
+            fontSize: '1em'
+          }}
+        >
+          <option value="">Select destination</option>
+          {locations.map(loc => (
+            <option key={`end-${loc.id}`} value={loc.id}>{loc.name}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+          <input 
+            type="checkbox" 
+            checked={accessibilityMode}
+            onChange={() => setAccessibilityMode(!accessibilityMode)}
+            style={{ 
+              marginRight: '10px',
+              width: '18px',
+              height: '18px'
+            }}
+          />
+          <span style={{ fontSize: '1em' }}>Accessibility Mode (Elevators/Ramps)</span>
+        </label>
+      </div>
+      
+      <button 
+        onClick={calculateRoute}
+        disabled={!startPoint || !endPoint}
+        style={{ 
+          padding: '12px',
+          backgroundColor: !startPoint || !endPoint ? '#6c757d' : '#0056b3',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          width: '100%',
+          fontSize: '1em',
+          cursor: !startPoint || !endPoint ? 'not-allowed' : 'pointer',
+          transition: 'background-color 0.3s'
+        }}
+      >
+        {!startPoint || !endPoint ? 'Select Locations First' : 'Calculate Route'}
+      </button>
+    </div>
+  );
+
+  return (
+    <div style={{ 
+      fontFamily: 'Arial, sans-serif', 
+      maxWidth: '1000px', 
+      margin: '0 auto',
+      padding: '20px',
+      position: 'relative',
+      zIndex: 0,
+    }}>
+      <header style={{
+        backgroundColor: '#0056b3',
+        color: 'white',
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '30px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+      }}>
+        <h1 style={{ margin: 0, fontSize: '1.8em' }}>
+          <span role="img" aria-label="Train">🚉</span> Station Navigator
+        </h1>
+        <nav style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={() => setCurrentView('map')}
+            style={{ 
+              padding: '8px 16px',
+              backgroundColor: currentView === 'map' ? '#003d7a' : 'transparent',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '1em',
+              transition: 'background-color 0.3s'
+            }}
+          >
+            Map
+          </button>
+          <button 
+            onClick={() => setCurrentView('trains')}
+            style={{ 
+              padding: '8px 16px',
+              backgroundColor: currentView === 'trains' ? '#003d7a' : 'transparent',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '1em',
+              transition: 'background-color 0.3s'
+            }}
+          >
+            Trains
+          </button>
+          <button 
+            onClick={() => setCurrentView('navigate')}
+            style={{ 
+              padding: '8px 16px',
+              backgroundColor: currentView === 'navigate' ? '#003d7a' : 'transparent',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '1em',
+              transition: 'background-color 0.3s'
+            }}
+          >
+            Navigate
+          </button>
+        </nav>
+      </header>
+
+      <main style={{ padding: '0 10px' }}>
+        {currentView === 'map' && <MapView />}
+        {currentView === 'trains' && <TrainScheduleView />}
+        {currentView === 'navigate' && <NavigationPanelView />}
+      </main>
+
     </div>
   );
 };
 
-export default StationMap;
-
-
-
+export default StationNavigator;
