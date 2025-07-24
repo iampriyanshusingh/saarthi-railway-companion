@@ -214,6 +214,16 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-4">
               {user ? (
                 <div className="relative">
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white py-2 px-6 flex justify-between items-center text-sm"
+                  >
+                    <div className="flex space-x-4"></div>
+                    <GoogleTranslate />
+                    <ThemeChange />
+                  </motion.div>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
