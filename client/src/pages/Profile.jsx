@@ -40,7 +40,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -48,8 +48,8 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
-          <p className="text-gray-600">Manage your account and preferences</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Profile Settings</h1>
+          <p className="text-gray-600 dark:text-gray-300">Manage your account and preferences</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -60,21 +60,21 @@ const Profile = () => {
             transition={{ delay: 0.1 }}
             className="lg:col-span-1"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
               <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="w-12 h-12 text-primary-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-1">{user?.name}</h3>
-              <p className="text-gray-600 mb-4">{user?.email}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">{user?.name}</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">{user?.email}</p>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Member since</span>
+                  <span className="text-gray-600 dark:text-gray-300">Member since</span>
                   <span className="font-medium">
                     {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Recently'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Account type</span>
+                  <span className="text-gray-600 dark:text-gray-300">Account type</span>
                   <span className="font-medium capitalize">{user?.role || 'User'}</span>
                 </div>
               </div>
@@ -88,17 +88,17 @@ const Profile = () => {
             transition={{ delay: 0.2 }}
             className="lg:col-span-2"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
               <div className="flex items-center gap-2 mb-6">
-                <Settings className="w-5 h-5 text-gray-600" />
-                <h2 className="text-xl font-semibold text-gray-900">Account Settings</h2>
+                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Account Settings</h2>
               </div>
 
               {message && (
                 <div className={`mb-4 p-3 rounded-lg text-sm ${
                   message.includes('successfully') 
-                    ? 'bg-green-100 text-green-700 border border-green-200' 
-                    : 'bg-red-100 text-red-700 border border-red-200'
+                    ? 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700' 
+                    : 'bg-red-100 text-red-700 border border-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-700'
                 }`}>
                   {message}
                 </div>
@@ -172,19 +172,19 @@ const Profile = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="text-sm font-medium text-gray-700">Train Updates</label>
-                        <p className="text-sm text-gray-500">Receive notifications about train delays and platform changes</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        name="notifications"
-                        checked={formData.notifications}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      />
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Train Updates</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Receive notifications about train delays and platform changes</p>
                     </div>
+                    <input
+                      type="checkbox"
+                      name="notifications"
+                      checked={formData.notifications}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
+                    />
                   </div>
                 </div>
+              </div>
 
                 {/* Accessibility */}
                 <div>
@@ -195,32 +195,32 @@ const Profile = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <label className="text-sm font-medium text-gray-700">High Contrast Mode</label>
-                        <p className="text-sm text-gray-500">Enable high contrast colors for better visibility</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        name="accessibilityMode"
-                        checked={formData.accessibilityMode}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      />
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">High Contrast Mode</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Enable high contrast colors for better visibility</p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <label className="text-sm font-medium text-gray-700">Wheelchair Assistance</label>
-                        <p className="text-sm text-gray-500">Request wheelchair assistance by default</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        name="wheelchairAssistance"
-                        checked={formData.wheelchairAssistance}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      />
+                    <input
+                      type="checkbox"
+                      name="accessibilityMode"
+                      checked={formData.accessibilityMode}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Wheelchair Assistance</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Request wheelchair assistance by default</p>
                     </div>
+                    <input
+                      type="checkbox"
+                      name="wheelchairAssistance"
+                      checked={formData.wheelchairAssistance}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
+                    />
                   </div>
                 </div>
+              </div>
 
                 {/* Save Button */}
                 <div className="pt-4">

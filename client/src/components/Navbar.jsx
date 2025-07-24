@@ -156,6 +156,7 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import { IoCalendarOutline } from "react-icons/io5";
 import { useAuth } from "../contexts/AuthContext";
 import GoogleTranslate from "../utils/Lang/Language";
 import { motion } from "framer-motion";
@@ -171,19 +172,20 @@ const Navbar = () => {
     { name: "Home", href: "/", icon: Train },
     { name: "Station Map", href: "/map", icon: Map },
     { name: "Train Schedule", href: "/schedule", icon: Clock },
+    { name: "Booking", href: "/booking", icon: IoCalendarOutline },
   ];
 
   const isActive = (href) => location.pathname === href;
 
   return (
     <>
-      <nav className="bg-white shadow-lg fixed w-full top-0 z-50 ">
+      <nav className="bg-white dark:bg-gray-900 shadow-lg fixed w-full top-0 z-50 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center space-x-2">
                 <Train className="h-8 w-8 text-blue-600" />
-                <span className="text-2xl font-bold text-gray-900">
+                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Saarthi
                 </span>
               </Link>
@@ -199,8 +201,8 @@ const Navbar = () => {
                     to={item.href}
                     className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive(item.href)
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                        ? "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-gray-800"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -218,7 +220,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white py-2 px-6 flex justify-between items-center text-sm"
+                    className="bg-white dark:bg-yellow-500 py-2 px-6 flex justify-between items-center text-sm"
                   >
                     <div className="flex space-x-4"></div>
                     <GoogleTranslate />
@@ -226,7 +228,7 @@ const Navbar = () => {
                   </motion.div>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                    className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     <User className="h-5 w-5" />
                     <span className="text-sm font-medium">{user.name}</span>
@@ -269,7 +271,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-4">
                   {/* <Link
                   to="/auth"
-                  className="text-gray-700 hover:text-blue-600 text-sm font-medium transition-colors"
+                  className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 text-sm font-medium transition-colors"
                 >
                   Sign in
                 </Link> */}
@@ -277,7 +279,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white py-2 px-6 flex justify-between items-center text-sm"
+                    className="bg-white dark:bg-gray-800 py-2 px-6 flex justify-between items-center text-sm"
                   >
                     <div className="flex space-x-4"></div>
                     <GoogleTranslate />
@@ -297,7 +299,7 @@ const Navbar = () => {
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:text-blue-600"
               >
                 {isOpen ? (
                   <X className="h-6 w-6" />
@@ -311,7 +313,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden bg-white border-t">
+          <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -321,8 +323,8 @@ const Navbar = () => {
                     to={item.href}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${
                       isActive(item.href)
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                        ? "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-gray-800"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
                     }`}
                     onClick={() => setIsOpen(false)}
                   >
@@ -336,7 +338,7 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/profile"
-                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     onClick={() => setIsOpen(false)}
                   >
                     <Settings className="h-5 w-5" />
@@ -345,7 +347,7 @@ const Navbar = () => {
                   {user.email === "admin@saarthi.com" && (
                     <Link
                       to="/admin"
-                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                       onClick={() => setIsOpen(false)}
                     >
                       <Settings className="h-5 w-5" />
@@ -357,7 +359,7 @@ const Navbar = () => {
                       logout();
                       setIsOpen(false);
                     }}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 w-full text-left"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 w-full text-left"
                   >
                     <LogOut className="h-5 w-5" />
                     <span>Sign out</span>
@@ -367,7 +369,7 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/auth"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     onClick={() => setIsOpen(false)}
                   >
                     Sign in
