@@ -1,19 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { 
-  Map, 
-  Clock, 
-  MessageCircle, 
-  Accessibility, 
-  Globe, 
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  Map,
+  Clock,
+  MessageCircle,
+  Accessibility,
+  Globe,
   Shield,
   ArrowRight,
   Train,
   Navigation,
-  Users
-} from 'lucide-react';
-import { useSocket } from '../contexts/SocketContext';
+  Users,
+} from "lucide-react";
+import { useSocket } from "../contexts/SocketContext";
 
 const Homepage = () => {
   const { trains, announcements, isConnected } = useSocket();
@@ -21,39 +21,44 @@ const Homepage = () => {
   const features = [
     {
       icon: Map,
-      title: '3D Station Maps',
-      description: 'Interactive visual layouts with clickable locations for easy navigation',
-      color: 'bg-blue-500',
+      title: "3D Station Maps",
+      description:
+        "Interactive visual layouts with clickable locations for easy navigation",
+      color: "bg-blue-500",
     },
     {
       icon: Navigation,
-      title: 'Real-time Navigation',
-      description: 'Step-by-step directions from entry to platforms with live updates',
-      color: 'bg-green-500',
+      title: "Real-time Navigation",
+      description:
+        "Step-by-step directions from entry to platforms with live updates",
+      color: "bg-green-500",
     },
     {
       icon: MessageCircle,
-      title: 'AI Assistant',
-      description: 'Smart chatbot powered by AI to answer all your railway queries',
-      color: 'bg-purple-500',
+      title: "AI Assistant",
+      description:
+        "Smart chatbot powered by AI to answer all your railway queries",
+      color: "bg-purple-500",
     },
     {
       icon: Accessibility,
-      title: 'Accessibility First',
-      description: 'Voice commands, bilingual support, and wheelchair assistance',
-      color: 'bg-orange-500',
+      title: "Accessibility First",
+      description:
+        "Voice commands, bilingual support, and wheelchair assistance",
+      color: "bg-orange-500",
     },
     {
       icon: Clock,
-      title: 'Live Updates',
-      description: 'Real-time train schedules, platform changes, and announcements',
-      color: 'bg-red-500',
+      title: "Live Updates",
+      description:
+        "Real-time train schedules, platform changes, and announcements",
+      color: "bg-red-500",
     },
     {
       icon: Shield,
-      title: 'Secure & Reliable',
-      description: 'Safe authentication and consistent service availability',
-      color: 'bg-indigo-500',
+      title: "Secure & Reliable",
+      description: "Safe authentication and consistent service availability",
+      color: "bg-indigo-500",
     },
   ];
 
@@ -76,8 +81,9 @@ const Homepage = () => {
               Welcome to Saarthi
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-              Your intelligent railway station assistant that transforms travel with AI-powered navigation,
-              real-time updates, and accessibility-first design.
+              Your intelligent railway station assistant that transforms travel
+              with AI-powered navigation, real-time updates, and
+              accessibility-first design.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -105,13 +111,18 @@ const Homepage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  isConnected ? "bg-green-500" : "bg-red-500"
+                }`}
+              ></div>
               <span className="text-sm font-medium text-gray-700">
-                {isConnected ? 'Live Updates Active' : 'Connecting...'}
+                {isConnected ? "Live Updates Active" : "Connecting..."}
               </span>
             </div>
             <div className="text-sm text-gray-600">
-              {trains?.length} trains tracked • {announcements?.length} recent announcements
+              {trains?.length} trains tracked • {announcements?.length} recent
+              announcements
             </div>
           </div>
         </div>
@@ -131,7 +142,8 @@ const Homepage = () => {
               Smart Features for Modern Travel
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Experience the future of railway station navigation with our comprehensive suite of intelligent features
+              Experience the future of railway station navigation with our
+              comprehensive suite of intelligent features
             </p>
           </motion.div>
 
@@ -147,10 +159,14 @@ const Homepage = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow"
                 >
-                  <div className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-6`}>
+                  <div
+                    className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-6`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    {feature.title}
+                  </h3>
                   <p className="text-gray-600">{feature.description}</p>
                 </motion.div>
               );
@@ -173,22 +189,35 @@ const Homepage = () => {
             >
               <div className="flex items-center space-x-3 mb-6">
                 <Train className="h-6 w-6 text-blue-600" />
-                <h3 className="text-2xl font-bold text-gray-900">Live Train Updates</h3>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  Live Train Updates
+                </h3>
               </div>
-              
+
               <div className="space-y-4">
                 {recentTrains?.map((train) => (
-                  <div key={train.id} className="bg-white rounded-lg p-4 shadow-sm">
+                  <div
+                    key={train.id}
+                    className="bg-white rounded-lg p-4 shadow-sm"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h4 className="font-semibold text-gray-900">{train.trainName}</h4>
-                        <p className="text-sm text-gray-600">{train.source} → {train.destination}</p>
+                        <h4 className="font-semibold text-gray-900">
+                          {train.trainName}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {train.source} → {train.destination}
+                        </p>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        train.status === 'On Time' ? 'bg-green-100 text-green-800' :
-                        train.status === 'Delayed' ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          train.status === "On Time"
+                            ? "bg-green-100 text-green-800"
+                            : train.status === "Delayed"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
                         {train.status}
                       </span>
                     </div>
@@ -199,7 +228,7 @@ const Homepage = () => {
                   </div>
                 ))}
               </div>
-              
+
               <Link
                 to="/schedule"
                 className="mt-6 inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium"
@@ -219,24 +248,39 @@ const Homepage = () => {
             >
               <div className="flex items-center space-x-3 mb-6">
                 <Users className="h-6 w-6 text-orange-600" />
-                <h3 className="text-2xl font-bold text-gray-900">Station Announcements</h3>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  Station Announcements
+                </h3>
               </div>
-              
+
               <div className="space-y-4">
                 {recentAnnouncements?.length > 0 ? (
                   recentAnnouncements?.map((announcement) => (
-                    <div key={announcement.id} className="bg-white rounded-lg p-4 shadow-sm">
+                    <div
+                      key={announcement.id}
+                      className="bg-white rounded-lg p-4 shadow-sm"
+                    >
                       <div className="flex items-start space-x-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${
-                          announcement.type === 'emergency' ? 'bg-red-500' :
-                          announcement.type === 'warning' ? 'bg-yellow-500' :
-                          'bg-blue-500'
-                        }`}></div>
+                        <div
+                          className={`w-2 h-2 rounded-full mt-2 ${
+                            announcement.type === "emergency"
+                              ? "bg-red-500"
+                              : announcement.type === "warning"
+                              ? "bg-yellow-500"
+                              : "bg-blue-500"
+                          }`}
+                        ></div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 mb-1">{announcement.title}</h4>
-                          <p className="text-sm text-gray-600 mb-2">{announcement.message}</p>
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            {announcement.title}
+                          </h4>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {announcement.message}
+                          </p>
                           <p className="text-xs text-gray-500">
-                            {new Date(announcement.timestamp).toLocaleTimeString()}
+                            {new Date(
+                              announcement.timestamp
+                            ).toLocaleTimeString()}
                           </p>
                         </div>
                       </div>
@@ -248,9 +292,11 @@ const Homepage = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="mt-6 text-center">
-                <span className="text-sm text-gray-600">Live updates powered by Socket.io</span>
+                <span className="text-sm text-gray-600">
+                  Live updates powered by Socket.io
+                </span>
               </div>
             </motion.div>
           </div>
@@ -288,31 +334,32 @@ const Homepage = () => {
         </div>
       </section> */}
 
-        {/* CTA Section */}
-     <section className="py-20 bg-gray-900">
+      {/* CTA Section */}
+      <section className="py-20 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.6 }}
-             viewport={{ once: true }}
-           >
-             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-             Ready to Transform Your Station Experience?
-           </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+              Ready to Transform Your Station Experience?
+            </h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join thousands of travelers who are already using Saarthi to navigate stations with confidence and ease.
+              Join thousands of travelers who are already using Saarthi to
+              navigate stations with confidence and ease.
             </p>
-             <Link
-               to="/auth"
-               className="inline-flex items-center px-8 py-4 bg-accent-500 text-white rounded-lg font-semibold hover:bg-accent-600 transition-all duration-200 shadow-lg hover:shadow-xl group"
+            <Link
+              to="/auth"
+              className="inline-flex items-center px-8 py-4 bg-accent-500 text-white rounded-lg font-semibold hover:bg-accent-600 transition-all duration-200 shadow-lg hover:shadow-xl group"
             >
-               Start Your Journey
-               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-             </Link>
-           </motion.div>
-         </div>
-       </section>
+              Start Your Journey
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 };
