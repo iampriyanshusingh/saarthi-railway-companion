@@ -21,21 +21,18 @@ router.post("/bookCloakroom", async (req, res) => {
       price,
     });
     await booking.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Cloakroom booking successful",
-        booking,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Cloakroom booking successful",
+      booking,
+    });
   } catch (error) {
     console.error("Cloakroom booking error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error during cloakroom booking",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error during cloakroom booking",
+      error: error.stack,
+    });
   }
 });
 
@@ -76,9 +73,11 @@ router.post("/bookCoolie", async (req, res) => {
       .json({ success: true, message: "Coolie booking successful", booking });
   } catch (error) {
     console.error("Coolie booking error:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Server error during coolie booking" });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error during coolie booking",
+      error: error.stack,
+    });
   }
 });
 
@@ -98,21 +97,18 @@ router.post("/bookWheelchair", async (req, res) => {
       price,
     });
     await booking.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Wheelchair booking successful",
-        booking,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Wheelchair booking successful",
+      booking,
+    });
   } catch (error) {
     console.error("Wheelchair booking error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error during wheelchair booking",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error during wheelchair booking",
+      error: error.stack,
+    });
   }
 });
 
