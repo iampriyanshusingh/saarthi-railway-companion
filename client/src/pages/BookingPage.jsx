@@ -179,11 +179,30 @@ const BookingPage = () => {
   // Handle form submission based on selected service
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
     if (selectedService === "cloak") {
+      if (!formData.items || !formData.startDate || !formData.endDate) {
+        alert("Please fill all required fields for Cloakroom booking.");
+        return;
+      }
       await bookCloakroom();
     } else if (selectedService === "coolie") {
+      if (
+        !formData.pickupLocation ||
+        !formData.departureLocation ||
+        !formData.bookingDate ||
+        !formData.bookingTime
+      ) {
+        alert("Please fill all required fields for Coolie booking.");
+        return;
+      }
       await bookCoolie();
     } else if (selectedService === "wheelchair") {
+      if (!formData.bookingDate || !formData.bookingTime) {
+        alert("Please fill all required fields for Wheelchair booking.");
+        return;
+      }
       await bookWheelchair();
     }
   };
