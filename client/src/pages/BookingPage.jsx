@@ -24,10 +24,13 @@ const BookingPage = () => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
+  const BACKEND_URL =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
   // Fetch station suggestions
   const fetchStationSuggestions = async (query) => {
     try {
-      const response = await axios.get(`http://localhost:3000/station/`);
+      const response = await axios.get(`${BACKEND_URL}/station/`);
       if (response.data.length > 0) {
         setStationSuggestions(response.data);
         setNoResults(false);
@@ -46,7 +49,7 @@ const BookingPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/station/${stationId}/bookings`
+        `${BACKEND_URL}/station/${stationId}/bookings`
       );
       const { coolieBookings, wheelchairBookings, cloakroomBookings } =
         response.data;
@@ -123,7 +126,7 @@ const BookingPage = () => {
         price: 100,
       };
 
-      await axios.post(`http://localhost:3000/api/bookCloakroom`, requestBody);
+      await axios.post(`${BACKEND_URL}/api/bookCloakroom`, requestBody);
       alert("Cloakroom booking successful!");
     } catch (error) {
       alert(
@@ -144,7 +147,7 @@ const BookingPage = () => {
         price: 250,
       };
 
-      await axios.post(`http://localhost:3000/api/bookCoolie`, requestBody);
+      await axios.post(`${BACKEND_URL}/api/bookCoolie`, requestBody);
       alert("Coolie booking successful!");
     } catch (error) {
       alert(
@@ -163,7 +166,7 @@ const BookingPage = () => {
         price: 200,
       };
 
-      await axios.post(`http://localhost:3000/api/bookWheelchair`, requestBody);
+      await axios.post(`${BACKEND_URL}/api/bookWheelchair`, requestBody);
       alert("Wheelchair booking successful!");
     } catch (error) {
       alert(
