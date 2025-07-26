@@ -3,7 +3,7 @@ import { motion, useAnimation, AnimatePresence } from "framer-motion";
 
 const HeroSection = ({ setActiveSection }) => {
   return (
-    <section className="text-center overflow-hidden py-16 md:py-24 bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl border border-gray-700 mb-10 md:mb-20 px-4 md:px-12">
+    <section className="text-center py-16 md:py-24 bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl border border-gray-700 mb-10 md:mb-20 px-4 md:px-12">
       <motion.h2
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
