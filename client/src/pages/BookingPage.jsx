@@ -371,14 +371,14 @@ const BookingPage = () => {
 
   return (
     <div
-      className="max-w-5xl p-6 mx-auto bg-white rounded-lg shadow-lg  "
+      className="max-w-5xl p-6 mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg dark:shadow-gray-800"
       style={{ marginTop: "3rem", marginBottom: "3rem" }}
     >
       <div className="flex flex-col items-center">
         <div className="flex w-full justify-between items-center  mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-gray-800 transition-all duration-300 hover:text-white hover:bg-gray-800 border-2 border-gray-500 rounded-md px-2 py-1 shadow-sm text-sm"
+            className="flex items-center text-gray-800 dark:text-gray-200 transition-all duration-300 hover:text-white hover:bg-gray-800 dark:hover:bg-gray-700 border-2 border-gray-500 dark:border-gray-700 rounded-md px-2 py-1 shadow-sm text-sm"
           >
             <IoArrowBack className="mr-1" />
             Go Back
@@ -392,12 +392,14 @@ const BookingPage = () => {
           )}
         </div>
 
-        <h1 className="mb-6 text-3xl font-bold text-blue-950">Booking Page</h1>
+        <h1 className="mb-6 text-3xl font-bold text-blue-950 dark:text-gray-100">
+          Booking Page
+        </h1>
 
         <div className="mb-6 w-3/5">
           {" "}
           {/* Setting width to 60% */}
-          <label className="block  text-blue-800 text-center mb-2 font-medium">
+          <label className="block  text-blue-800 dark:text-gray-300 text-center mb-2 font-medium">
             Search for a Station
           </label>
           <input
@@ -405,20 +407,22 @@ const BookingPage = () => {
             value={station}
             onChange={handleStationInputChange}
             placeholder="Type to search..."
-            className="w-full px-4 py-3 transition duration-200 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 transition duration-200 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
           />
           {noResults && (
-            <p className="mt-2 text-red-600 text-center">No results found.</p>
+            <p className="mt-2 text-red-600 dark:text-red-400 text-center">
+              No results found.
+            </p>
           )}
         </div>
 
         {stationSuggestions.length > 0 && (
-          <ul className="mt-2 bg-white border border-gray-300 rounded-lg shadow-md w-3/5">
+          <ul className="mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md dark:shadow-gray-700 w-3/5">
             {stationSuggestions.map((suggestion) => (
               <li
                 key={suggestion._id}
                 onClick={() => handleStationSelect(suggestion)}
-                className="p-3 transition duration-150 cursor-pointer hover:bg-gray-100"
+                className="p-3 transition duration-150 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 {suggestion.name}
               </li>
@@ -427,16 +431,18 @@ const BookingPage = () => {
         )}
       </div>
 
-      {loading && <p className="text-blue-600">Loading services...</p>}
+      {loading && (
+        <p className="text-blue-600 dark:text-blue-400">Loading services...</p>
+      )}
 
       <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-3">
         {services.map((service) => (
           <div
             key={service.id}
-            className="flex-1 p-4 mx-2 mb-4 transition duration-150 bg-blue-50 border border-blue-200 rounded-lg shadow-sm hover:shadow-md hover:shadow-blue-300 hover:-translate-y-1 hover:duration-500"
+            className="flex-1 p-4 mx-2 mb-4 transition duration-150 bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-700 hover:shadow-md hover:shadow-blue-300 dark:hover:shadow-blue-900 hover:-translate-y-1 hover:duration-500"
           >
             <div className="flex items-center justify-between ">
-              <h3 className="text-lg text-blue-800 font-semibold">
+              <h3 className="text-lg text-blue-800 dark:text-gray-100 font-semibold">
                 {service.name}
               </h3>
             </div>
@@ -446,7 +452,7 @@ const BookingPage = () => {
               ) : (
                 <span className="text-lg font-bold text-red-500">●</span>
               )}
-              <p className="mt-1 ml-1">
+              <p className="mt-1 ml-1 dark:text-gray-300">
                 Available:{" "}
                 <span className="font-semibold">{service.availability}</span>
               </p>
