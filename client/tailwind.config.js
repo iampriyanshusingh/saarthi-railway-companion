@@ -31,7 +31,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Poppins", "Inter", "sans-serif"],
       },
       animation: {
         float: "float 6s ease-in-out infinite",
