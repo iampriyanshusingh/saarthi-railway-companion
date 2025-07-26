@@ -68,7 +68,7 @@ const Homepage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <motion.div
@@ -107,7 +107,7 @@ const Homepage = () => {
       </section>
 
       {/* Live Status Bar */}
-      <section className="bg-white shadow-lg">
+      <section className="from-white via-white to-white shadow-lg dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 blue">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -116,11 +116,11 @@ const Homepage = () => {
                   isConnected ? "bg-green-500" : "bg-red-500"
                 }`}
               ></div>
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-white">
                 {isConnected ? "Live Updates Active" : "Connecting..."}
               </span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 dark:text-white">
               {trains?.length} trains tracked • {announcements?.length} recent
               announcements
             </div>
@@ -129,7 +129,7 @@ const Homepage = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 from-white via-white to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 dark:backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -138,10 +138,10 @@ const Homepage = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4 dark:text-white">
               Smart Features for Modern Travel
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto dark:text-gray-500">
               Experience the future of railway station navigation with our
               comprehensive suite of intelligent features
             </p>
@@ -157,17 +157,19 @@ const Homepage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow"
+                  className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition duration-200 border border-teal-300 focus:ring-2 focus:ring-teal-400 dark:bg-gray-900 dark:shadow-gray-800 "
                 >
                   <div
-                    className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-6`}
+                    className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-6 `}
                   >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 dark:text-white">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <p className="text-gray-600 dark:text-white">
+                    {feature.description}
+                  </p>
                 </motion.div>
               );
             })}
@@ -176,18 +178,18 @@ const Homepage = () => {
       </section>
 
       {/* Live Dashboard Preview */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <section className="py-20 from-white via-white to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 ">
             {/* Recent Trains */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8"
+              className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 transition duration-200 border border-teal-300 focus:ring-2 focus:ring-teal-400 dark:bg-gray-900 dark:shadow-gray-800 "
             >
-              <div className="flex items-center space-x-3 mb-6">
+              <div className="flex items-center space-x-3 mb-6 ">
                 <Train className="h-6 w-6 text-blue-600" />
                 <h3 className="text-2xl font-bold text-gray-900">
                   Live Train Updates
@@ -198,9 +200,9 @@ const Homepage = () => {
                 {recentTrains?.map((train) => (
                   <div
                     key={train.id}
-                    className="bg-white rounded-lg p-4 shadow-sm"
+                    className="bg-white rounded-lg p-4 shadow-sm transition duration-200 border border-teal-300 focus:ring-2 focus:ring-teal-400  dark:bg-gray-900 dark:shadow-gray-800"
                   >
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-2 ">
                       <div>
                         <h4 className="font-semibold text-gray-900">
                           {train.trainName}
@@ -244,7 +246,7 @@ const Homepage = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-8"
+              className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-8 transition duration-200 border border-teal-300 focus:ring-2 focus:ring-teal-400 dark:bg-gray-900 dark:shadow-gray-800"
             >
               <div className="flex items-center space-x-3 mb-6">
                 <Users className="h-6 w-6 text-orange-600" />
