@@ -1,9 +1,53 @@
-/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* You can add your custom global CSS here */
-body {
-    font-family: 'Inter', sans-serif;
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+  body.dark {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+@layer components {
+  .glassmorphism {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  .dark .glassmorphism {
+    @apply bg-gray-800/50 border-gray-700/50;
+  }
+
+  .station-gradient {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+  }
+
+  .floating-panel {
+    @apply bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/50;
+  }
+  .dark .floating-panel {
+    @apply bg-gray-800/90 border-gray-700/50;
+  }
+
+  .nav-item {
+    @apply px-4 py-2 rounded-lg transition-all duration-200 hover:bg-primary-50 hover:text-primary-600;
+  }
+  .dark .nav-item {
+    @apply hover:bg-primary-900 hover:text-primary-400;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+  .dark .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-400 shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white text-primary-600 border border-primary-200 rounded-lg font-medium hover:bg-primary-50 transition-all duration-200;
+  }
+  .dark .btn-secondary {
+    @apply bg-gray-700 text-primary-400 border-primary-600 hover:bg-gray-600;
+  }
 }
