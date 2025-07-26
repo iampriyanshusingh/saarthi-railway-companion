@@ -127,7 +127,12 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Hamburger */}
-          <div className="md:hidden">
+          {/* Mobile Controls and Hamburger */}
+          <div className="flex items-center space-x-2 md:hidden">
+            <div className="w-[140px]">
+              <GoogleTranslate />
+            </div>
+            <ThemeChange />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
