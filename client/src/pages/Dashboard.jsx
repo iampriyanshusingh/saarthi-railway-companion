@@ -10,10 +10,12 @@ import {
 import { motion } from "framer-motion";
 import { useSocket } from "../contexts/SocketContext.jsx";
 import { useAuth } from "../contexts/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { trainUpdates, platformUpdates } = useSocket();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const quickActions = [
     {
@@ -21,24 +23,28 @@ const Dashboard = () => {
       label: "Navigate Station",
       action: "navigate",
       color: "bg-blue-500",
+      path: "/map"
     },
     {
       icon: Wheelchair,
       label: "Request Assistance",
       action: "assistance",
       color: "bg-green-500",
+      path: "/assistance"
     },
     {
       icon: Train,
       label: "Track My Train",
       action: "track",
       color: "bg-purple-500",
+      path: "/schedule"
     },
     {
       icon: Calendar,
       label: "Book Services",
       action: "book",
       color: "bg-orange-500",
+      path: "/booking"
     },
   ];
 
@@ -65,6 +71,38 @@ const Dashboard = () => {
       number: "12678",
       platform: "3",
       time: "12:00 PM",
+      status: "On Time",
+    },
+    {
+      id: 4,
+      name: "Howrah Superfast",
+      number: "12839",
+      platform: "4",
+      time: "01:45 PM",
+      status: "On Time",
+    },
+    {
+      id: 5,
+      name: "Bengaluru Duronto",
+      number: "12245",
+      platform: "1",
+      time: "02:30 PM",
+      status: "On Time",
+    },
+    {
+      id: 6,
+      name: "Secunderabad SF",
+      number: "12723",
+      platform: "3",
+      time: "03:00 PM",
+      status: "Delayed by 5 min",
+    },
+    {
+      id: 7,
+      name: "Ahmedabad Express",
+      number: "19031",
+      platform: "2",
+      time: "04:10 PM",
       status: "On Time",
     },
   ];
@@ -107,6 +145,7 @@ const Dashboard = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.1 * index }}
                     className="flex flex-col items-center p-4 rounded-xl hover:shadow-md transition-all duration-200 group"
+                    onClick={() => navigate(action.path)}
                   >
                     <div
                       className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker"; // Import DatePicker
 import "react-datepicker/dist/react-datepicker.css"; // Import default styles
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingPage = () => {
   const [station, setStation] = useState("");
@@ -24,24 +26,67 @@ const BookingPage = () => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
-  const BACKEND_URL =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  // // Mock station data for Indian Railways matching the Station schema
+  // const mockStations = [
+  //   { _id: "654321abcd", name: "Mumbai Central", code: "BCT", city: "Mumbai" },
+  //   { _id: "123456abcd", name: "New Delhi", code: "NDLS", city: "New Delhi" },
+  //   { _id: "987654abcd", name: "Howrah Junction", code: "HWH", city: "Howrah" },
+  //   { _id: "456789abcd", name: "Chennai Central", code: "MAS", city: "Chennai" },
+  //   { _id: "321654abcd", name: "Secunderabad Junction", code: "SC", city: "Secunderabad" },
+  //   { _id: "654789abcd", name: "Bengaluru City Junction", code: "SBC", city: "Bengaluru" },
+  //   { _id: "987123abcd", name: "Ahmedabad Junction", code: "ADI", city: "Ahmedabad" },
+  //   { _id: "147258abcd", name: "Pune Junction", code: "PUNE", city: "Pune" },
+  //   { _id: "369852abcd", name: "Jaipur Junction", code: "JP", city: "Jaipur" },
+  //   { _id: "258741abcd", name: "Lucknow Charbagh NR", code: "LKO", city: "Lucknow" },
+  //   { _id: "741852abcd", name: "Bhopal Junction", code: "BPL", city: "Bhopal" },
+  //   { _id: "852963abcd", name: "Patna Junction", code: "PNBE", city: "Patna" },
+  //   { _id: "159357abcd", name: "Varanasi Junction", code: "BSB", city: "Varanasi" },
+  //   { _id: "753951abcd", name: "Visakhapatnam Junction", code: "VSKP", city: "Visakhapatnam" },
+  //   { _id: "951753abcd", name: "Indore Junction", code: "INDB", city: "Indore" },
+  // ];
 
-  // Fetch station suggestions
+  const mockStations = [
+    { _id: "64c4566e2fdabb29f1d4721a", name: "Mumbai Central", code: "BCT", city: "Mumbai" },
+    { _id: "64c4566e2fdabb29f1d4721b", name: "New Delhi", code: "NDLS", city: "New Delhi" },
+    { _id: "64c4566e2fdabb29f1d4721c", name: "Howrah Junction", code: "HWH", city: "Howrah" },
+    { _id: "64c4566e2fdabb29f1d4721d", name: "Chennai Central", code: "MAS", city: "Chennai" },
+    { _id: "64c4566e2fdabb29f1d4721e", name: "Secunderabad Junction", code: "SC", city: "Secunderabad" },
+    { _id: "64c4566e2fdabb29f1d4721f", name: "Bengaluru City Junction", code: "SBC", city: "Bengaluru" },
+    { _id: "64c4566e2fdabb29f1d47220", name: "Ahmedabad Junction", code: "ADI", city: "Ahmedabad" },
+    { _id: "64c4566e2fdabb29f1d47221", name: "Pune Junction", code: "PUNE", city: "Pune" },
+    { _id: "64c4566e2fdabb29f1d47222", name: "Jaipur Junction", code: "JP", city: "Jaipur" },
+    { _id: "64c4566e2fdabb29f1d47223", name: "Lucknow Charbagh NR", code: "LKO", city: "Lucknow" },
+    { _id: "64c4566e2fdabb29f1d47224", name: "Bhopal Junction", code: "BPL", city: "Bhopal" },
+    { _id: "64c4566e2fdabb29f1d47225", name: "Patna Junction", code: "PNBE", city: "Patna" },
+    { _id: "64c4566e2fdabb29f1d47226", name: "Varanasi Junction", code: "BSB", city: "Varanasi" },
+    { _id: "64c4566e2fdabb29f1d47227", name: "Visakhapatnam Junction", code: "VSKP", city: "Visakhapatnam" },
+    { _id: "64c4566e2fdabb29f1d47228", name: "Indore Junction", code: "INDB", city: "Indore" }
+  ];
+  
+
+  const BACKEND_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+  // Fetch station suggestions (now using mock data)
   const fetchStationSuggestions = async (query) => {
-    try {
-      const response = await axios.get(`${BACKEND_URL}/station/`);
-      if (response.data.length > 0) {
-        setStationSuggestions(response.data);
-        setNoResults(false);
-      } else {
-        setStationSuggestions([]);
-        setNoResults(true);
-      }
-    } catch (err) {
-      setError("Error fetching station suggestions. Please try again.");
+    setLoading(true);
+    setError("");
+    setNoResults(false);
+
+    const filteredSuggestions = mockStations.filter((station) =>
+      station.name.toLowerCase().includes(query.toLowerCase()) ||
+      station.code.toLowerCase().includes(query.toLowerCase()) ||
+      station.city.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filteredSuggestions.length > 0) {
+      setStationSuggestions(filteredSuggestions);
       setNoResults(false);
+    } else {
+      setStationSuggestions([]);
+      setNoResults(true);
     }
+    setLoading(false);
   };
 
   // Fetch service data for the selected station
@@ -127,9 +172,9 @@ const BookingPage = () => {
       };
 
       await axios.post(`${BACKEND_URL}/api/bookCloakroom`, requestBody);
-      alert("Cloakroom booking successful!");
+      toast.success("Cloakroom booking successful!");
     } catch (error) {
-      alert(
+      toast.error(
         "Failed to complete the booking: " +
           (error.response?.data?.message || "Unknown error")
       );
@@ -148,9 +193,9 @@ const BookingPage = () => {
       };
 
       await axios.post(`${BACKEND_URL}/api/bookCoolie`, requestBody);
-      alert("Coolie booking successful!");
+      toast.success("Coolie booking successful!");
     } catch (error) {
-      alert(
+      toast.error(
         "Failed to complete the booking: " +
           (error.response?.data?.message || "Unknown error")
       );
@@ -158,7 +203,8 @@ const BookingPage = () => {
   };
 
   const bookWheelchair = async () => {
-    try {
+    // try {
+      console.log('selected Station', selectedStation);
       const requestBody = {
         station: selectedStation._id,
         bookingDate: formData.bookingDate,
@@ -167,23 +213,28 @@ const BookingPage = () => {
       };
 
       await axios.post(`${BACKEND_URL}/api/bookWheelchair`, requestBody);
-      alert("Wheelchair booking successful!");
-    } catch (error) {
-      alert(
-        "Failed to complete the booking: " +
-          (error.response?.data?.message || "Unknown error")
-      );
-    }
+      toast.success("Wheelchair booking successful!");
+    // } catch (error) {
+    //   alert(
+    //     "Failed to complete the booking: " +
+    //       (error.response?.data?.message || "Unknown error")
+    //   );
+    // }
   };
 
   // Handle form submission based on selected service
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    if (!selectedStation) {
+      toast.error("Please select a station from the suggestions.");
+      return;
+    }
+
     // Client-side validation
     if (selectedService === "cloak") {
       if (!formData.items || !formData.startDate || !formData.endDate) {
-        alert("Please fill all required fields for Cloakroom booking.");
+        toast.error("Please fill all required fields for Cloakroom booking.");
         return;
       }
       await bookCloakroom();
@@ -194,13 +245,13 @@ const BookingPage = () => {
         !formData.bookingDate ||
         !formData.bookingTime
       ) {
-        alert("Please fill all required fields for Coolie booking.");
+        toast.error("Please fill all required fields for Coolie booking.");
         return;
       }
       await bookCoolie();
     } else if (selectedService === "wheelchair") {
       if (!formData.bookingDate || !formData.bookingTime) {
-        alert("Please fill all required fields for Wheelchair booking.");
+        toast.error("Please fill all required fields for Wheelchair booking.");
         return;
       }
       await bookWheelchair();
@@ -374,6 +425,7 @@ const BookingPage = () => {
       className="max-w-5xl p-6 mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg dark:shadow-gray-800"
       style={{ marginTop: "3rem", marginBottom: "3rem" }}
     >
+      <ToastContainer />
       <div className="flex flex-col items-center">
         <div className="flex w-full justify-between items-center  mb-6">
           <button
