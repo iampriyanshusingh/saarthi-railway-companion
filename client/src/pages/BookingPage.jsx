@@ -236,7 +236,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, items: e.target.value })
               }
               required
-              className=" w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className=" w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">Start Date: </label>
@@ -244,7 +244,7 @@ const BookingPage = () => {
               selected={formData.startDate}
               onChange={(date) => setFormData({ ...formData, startDate: date })}
               minDate={minDate} // Setting minimum date to today
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">End Date: </label>
@@ -252,7 +252,7 @@ const BookingPage = () => {
               selected={formData.endDate}
               onChange={(date) => setFormData({ ...formData, endDate: date })}
               minDate={minDate} // Setting minimum date to today
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <button
@@ -282,7 +282,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, pickupLocation: e.target.value })
               }
               required
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">Departure Location: </label>
@@ -293,7 +293,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, departureLocation: e.target.value })
               }
               required
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">Booking Date:</label>
@@ -303,7 +303,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, bookingDate: date })
               }
               minDate={minDate} // Setting minimum date to today
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">Booking Time:</label>
@@ -314,7 +314,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, bookingTime: e.target.value })
               }
               required
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <button
@@ -343,7 +343,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, bookingDate: date })
               }
               minDate={minDate} // Setting minimum date to today
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none dark:text-black"
             />
 
             <label className="block mt-4">Booking Time:</label>
@@ -354,7 +354,7 @@ const BookingPage = () => {
                 setFormData({ ...formData, bookingTime: e.target.value })
               }
               required
-              className="w-full px-4 py-2 mt-2 transition duration-200 border border-teal-300 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none"
+              className="w-full px-4 py-2 mt-2 transition duration-200 border border-teal-300 rounded-lg focus:ring-2 focus:ring-teal-400 outline-none dark:text-black"
             />
 
             <button
