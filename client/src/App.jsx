@@ -13,6 +13,7 @@ import Chatbot from "./components/Chatbot.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import TrainSchedule from "./pages/TrainSchedule.jsx";
 import BookingPage from "./pages/BookingPage.jsx";
+import RequestAssistancePage from "./pages/RequestAssistancePage.jsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/map" element={<StationMap />} />
               <Route path="/schedule" element={<TrainSchedule />} />
               <Route path="/booking" element={<BookingPage />} />
+              <Route path="/assistance" element={<RequestAssistancePage />} />
               <Route
                 path="/dashboard"
                 element={
